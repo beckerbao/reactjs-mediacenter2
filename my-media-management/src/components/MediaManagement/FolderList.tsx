@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Row, Col, Card, Button, Space } from 'antd';
 import { FolderFilled } from '@ant-design/icons';
 
+// --- Định nghĩa kiểu dữ liệu ---
 export interface FileItem {
   id: number;
   name: string;
@@ -19,14 +20,19 @@ export interface FolderItem {
   children: Array<FolderItem | FileItem>;
 }
 
+// --- Props cho FolderList ---
 interface FolderListProps {
   folders: FolderItem[];
   viewMode: 'grid' | 'list';
   onDoubleClickFolder: (folder: FolderItem) => void;
   onRightClickFolder?: (e: React.MouseEvent, folder: FolderItem) => void;
-  onRenameFolder?: (folder: FolderItem) => void; // hàm xử lý đổi tên
-  onDeleteFolder?: (folder: FolderItem) => void; // hàm xử lý xóa
+  onRenameFolder?: (folder: FolderItem) => void;
+  onDeleteFolder?: (folder: FolderItem) => void;
 }
+
+// Các cột có thể sort
+type SortColumn = 'name' | 'updatedAt';
+type SortDirection = 'asc' | 'desc';
 
 const FolderList: React.FC<FolderListProps> = ({
   folders,
@@ -36,11 +42,52 @@ const FolderList: React.FC<FolderListProps> = ({
   onRenameFolder,
   onDeleteFolder,
 }) => {
-  // ===== List Mode =====
+  // ================================
+  // ========== STATE SORT ==========
+  // ================================
+  const [sortColumn, setSortColumn] = useState<SortColumn>('name');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+
+  // Hàm toggle sort
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      // Nếu click lại cột cũ => đảo hướng
+      setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      // Nếu click cột khác => đặt cột mới, reset asc
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  // Sort folders dựa vào sortColumn, sortDirection
+  const sortedFolders = useMemo(() => {
+    const copy = [...folders];
+    copy.sort((a, b) => {
+      // So sánh theo cột
+      if (sortColumn === 'name') {
+        return a.name.localeCompare(b.name);
+      } else {
+        // sortColumn === 'updatedAt'
+        const aTime = a.updatedAt || '';
+        const bTime = b.updatedAt || '';
+        return aTime.localeCompare(bTime);
+      }
+    });
+    // Nếu hướng là 'desc', đảo ngược
+    if (sortDirection === 'desc') {
+      copy.reverse();
+    }
+    return copy;
+  }, [folders, sortColumn, sortDirection]);
+
+  // ================================
+  // ========== LIST MODE ===========
+  // ================================
   if (viewMode === 'list') {
     return (
       <div>
-        {/* Header (tuỳ ý) */}
+        {/* Header cho List View */}
         <Row
           style={{
             fontWeight: 'bold',
@@ -48,13 +95,42 @@ const FolderList: React.FC<FolderListProps> = ({
             padding: '8px 0',
           }}
         >
-          <Col span={6}>Name</Col>
-          <Col span={4}>Updated At</Col>
-          <Col span={4}>Media Type</Col>
-          <Col span={4}>Action</Col>
+          {/* Cột Name */}
+          <Col
+            span={6}
+            style={{ cursor: 'pointer' }}
+            onClick={() => handleSort('name')}
+          >
+            Name
+            {sortColumn === 'name' && (
+              sortDirection === 'asc' ? ' ↑' : ' ↓'
+            )}
+          </Col>
+
+          {/* Cột Updated At */}
+          <Col
+            span={4}
+            style={{ cursor: 'pointer' }}
+            onClick={() => handleSort('updatedAt')}
+          >
+            Updated At
+            {sortColumn === 'updatedAt' && (
+              sortDirection === 'asc' ? ' ↑' : ' ↓'
+            )}
+          </Col>
+
+          {/* Cột Media Type */}
+          <Col span={4}>
+            Media Type
+          </Col>
+
+          {/* Cột Action */}
+          <Col span={4}>
+            Action
+          </Col>
         </Row>
 
-        {folders.map(folder => (
+        {sortedFolders.map(folder => (
           <Row
             key={folder.id}
             style={{
@@ -75,12 +151,12 @@ const FolderList: React.FC<FolderListProps> = ({
 
             {/* Updated At */}
             <Col span={4}>
-              {folder.updatedAt ? folder.updatedAt : 'N/A'}
+              {folder.updatedAt || 'N/A'}
             </Col>
 
             {/* Media Type */}
             <Col span={4}>
-              {folder.mediaType ? folder.mediaType : 'Folder'}
+              {folder.mediaType || 'Folder'}
             </Col>
 
             {/* Action */}
@@ -89,7 +165,7 @@ const FolderList: React.FC<FolderListProps> = ({
                 <Button
                   size="small"
                   onClick={(e) => {
-                    e.stopPropagation(); // tránh double click folder
+                    e.stopPropagation();
                     onRenameFolder && onRenameFolder(folder);
                   }}
                 >
@@ -113,7 +189,9 @@ const FolderList: React.FC<FolderListProps> = ({
     );
   }
 
-  // ===== Grid Mode (giữ nguyên code cũ của bạn) =====
+  // ================================
+  // ========== GRID MODE ===========
+  // ================================
   return (
     <Row gutter={[146, 16]}>
       {folders.map(folder => (

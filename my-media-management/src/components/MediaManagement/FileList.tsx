@@ -15,13 +15,17 @@ interface FileListProps {
 // Hàm kiểm tra mediaType có phải là định dạng ảnh hay không
 function isImageType(mediaType?: string) {
     // Thêm dòng log
-    console.log('isImageType checking mediaType:', mediaType);
+    // console.log('isImageType checking mediaType:', mediaType);
 
     if (!mediaType) return false;
     const lower = mediaType.toLowerCase();
     
     return ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].includes(lower);
 }
+
+// Cột có thể sort
+type SortColumn = 'name' | 'updatedAt';
+type SortDirection = 'asc' | 'desc';
 
 const FileList: React.FC<FileListProps> = ({
   files,
@@ -30,6 +34,7 @@ const FileList: React.FC<FileListProps> = ({
   onRenameFile,
   onDeleteFile,
 }) => {
+    
   // ===== List Mode =====
   if (viewMode === 'list') {
     return (
