@@ -1,7 +1,8 @@
 import React from 'react';
-import { Row, Col, Card, Button, Space } from 'antd';
+import { Row, Col, Card, Button, Space, Tooltip } from 'antd';
 import { FileOutlined } from '@ant-design/icons';
 import type { FileItem } from './FolderList';
+import { Image } from 'antd';
 
 interface FileListProps {
   files: FileItem[];
@@ -9,6 +10,17 @@ interface FileListProps {
   onRightClickFile?: (e: React.MouseEvent, file: FileItem) => void;
   onRenameFile?: (file: FileItem) => void;
   onDeleteFile?: (file: FileItem) => void;
+}
+
+// Hàm kiểm tra mediaType có phải là định dạng ảnh hay không
+function isImageType(mediaType?: string) {
+    // Thêm dòng log
+    console.log('isImageType checking mediaType:', mediaType);
+
+    if (!mediaType) return false;
+    const lower = mediaType.toLowerCase();
+    
+    return ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].includes(lower);
 }
 
 const FileList: React.FC<FileListProps> = ({
@@ -115,7 +127,25 @@ const FileList: React.FC<FileListProps> = ({
             onContextMenu={onRightClickFile ? (e) => onRightClickFile(e, file) : undefined}
             title="Right Click"
           >
-            <FileOutlined style={{ fontSize: 48 }} />
+            {/* Thay icon FileOutlined bằng thumbnail nếu file là ảnh */}
+            {isImageType(file.mediaType) ? (
+             <Tooltip title={`File: ${file.name}`}>
+              <Image
+                src="https://www.mockupworld.co/wp-content/uploads/dynamic/2025/03/floating-hardcover-book-free-mockup-536x0-c-default.jpg"
+                preview={false}        // Tắt chức năng phóng to khi click
+                width={48}
+                height={48}
+                style={{ objectFit: 'cover' }}
+                alt="Thumbnail"
+              />
+              </Tooltip>
+            ) : (
+                <Tooltip title={`File: ${file.name}`}>
+              <FileOutlined style={{ fontSize: 48 }} />
+              </Tooltip>
+            )}
+
+            {/* <FileOutlined style={{ fontSize: 48 }} /> */}
             <div
               style={{
                 marginTop: 8,

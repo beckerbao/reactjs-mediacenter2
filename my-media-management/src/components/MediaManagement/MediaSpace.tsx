@@ -31,45 +31,86 @@ const { Search } = Input;
 // -- Kiểu hiển thị (grid / list) --
 type ViewMode = 'grid' | 'list';
 
-// -- Mock data: Folder nhiều cấp (tree) --
+// Mock data (Root folder)
 const mockRoot: FolderItem = {
-  id: 1,
-  name: 'Root',
-  type: 'folder',
-  children: [
-    {
-      id: 2,
-      name: 'Documents',
-      type: 'folder',
-      children: [
-        { id: 5, name: 'CV.pdf', type: 'file' },
-        {
-          id: 6,
-          name: 'Project',
-          type: 'folder',
-          children: [
-            { id: 7, name: 'proposal.docx', type: 'file' },
-            { id: 8, name: 'budget.xlsx', type: 'file' },
-          ],
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: 'Images',
-      type: 'folder',
-      children: [
-        { id: 9, name: 'logo.png', type: 'file' },
-        { id: 10, name: 'banner.jpg', type: 'file' },
-      ],
-    },
-    {
-      id: 4,
-      name: 'readme.txt',
-      type: 'file',
-    },
-  ],
-};
+    id: 1,
+    name: 'Root',
+    type: 'folder',
+    updatedAt: '2025-03-14 09:00',
+    mediaType: 'Folder', // Hoặc chỉ để trống cũng được, tuỳ bạn
+    children: [
+      {
+        id: 2,
+        name: 'Documents',
+        type: 'folder',
+        updatedAt: '2025-03-14 10:00',
+        mediaType: 'Folder',
+        children: [
+          {
+            id: 5,
+            name: 'CV.pdf',
+            type: 'file',
+            mediaType: 'pdf',
+            updatedAt: '2025-03-14 11:00',
+          },
+          {
+            id: 6,
+            name: 'Project',
+            type: 'folder',
+            updatedAt: '2025-03-14 09:30',
+            mediaType: 'Folder',
+            children: [
+              {
+                id: 7,
+                name: 'proposal.docx',
+                type: 'file',
+                mediaType: 'docx',
+                updatedAt: '2025-03-14 08:20',
+              },
+              {
+                id: 8,
+                name: 'budget.xlsx',
+                type: 'file',
+                mediaType: 'xlsx',
+                updatedAt: '2025-03-14 08:30',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 3,
+        name: 'Images',
+        type: 'folder',
+        updatedAt: '2025-03-14 09:10',
+        mediaType: 'Folder',
+        children: [
+          {
+            id: 9,
+            name: 'logo.png',
+            type: 'file',
+            mediaType: 'png',      // => sẽ hiển thị thumbnail
+            updatedAt: '2025-03-14 09:15',
+          },
+          {
+            id: 10,
+            name: 'banner.jpg',
+            type: 'file',
+            mediaType: 'jpg',      // => sẽ hiển thị thumbnail
+            updatedAt: '2025-03-14 09:20',
+          },
+        ],
+      },
+      {
+        id: 4,
+        name: 'readme.txt',
+        type: 'file',
+        mediaType: 'txt',
+        updatedAt: '2025-03-14 07:50',
+      },
+    ],
+  };
+  
 
 const MediaSpace: React.FC = () => {
   // -- 1) State quản lý đường dẫn (path) từ Root -> Folder hiện tại --
