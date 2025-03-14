@@ -107,7 +107,7 @@ const FileList: React.FC<FileListProps> = ({
           <Col span={4}>Action</Col>
         </Row>
 
-        {files.map(file => (
+        {sortedFiles.map(file => (
           <Row
             key={file.id}
             style={{
