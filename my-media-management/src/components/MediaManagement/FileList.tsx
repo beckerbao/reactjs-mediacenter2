@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Row, Col, Card, Button, Space, Tooltip } from 'antd';
 import { FileOutlined } from '@ant-design/icons';
 import type { FileItem } from './FolderList';
@@ -34,24 +34,78 @@ const FileList: React.FC<FileListProps> = ({
   onRenameFile,
   onDeleteFile,
 }) => {
-    
+    // ================================
+  // ========== STATE SORT ==========
+  // ================================
+  const [sortColumn, setSortColumn] = useState<SortColumn>('name');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+
+  // Toggle sort
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  // Sort files
+  const sortedFiles = useMemo(() => {
+    const copy = [...files];
+    copy.sort((a, b) => {
+      if (sortColumn === 'name') {
+        return a.name.localeCompare(b.name);
+      } else {
+        // sortColumn === 'updatedAt'
+        const aTime = a.updatedAt || '';
+        const bTime = b.updatedAt || '';
+        return aTime.localeCompare(bTime);
+      }
+    });
+    if (sortDirection === 'desc') {
+      copy.reverse();
+    }
+    return copy;
+  }, [files, sortColumn, sortDirection]);
+
   // ===== List Mode =====
   if (viewMode === 'list') {
     return (
       <div>
         {/* Header */}
-        {/* <Row
+        <Row
           style={{
             fontWeight: 'bold',
             borderBottom: '1px solid #eee',
             padding: '8px 0',
           }}
         >
-          <Col span={6}>Name</Col>
-          <Col span={4}>Updated At</Col>
+          <Col
+            span={6}
+            style={{ cursor: 'pointer' }}
+            onClick={() => handleSort('name')}
+          >
+            Name
+            {sortColumn === 'name' && (
+              sortDirection === 'asc' ? ' ↑' : ' ↓'
+            )}
+          </Col>
+
+          <Col
+            span={4}
+            style={{ cursor: 'pointer' }}
+            onClick={() => handleSort('updatedAt')}
+          >
+            Updated At
+            {sortColumn === 'updatedAt' && (
+              sortDirection === 'asc' ? ' ↑' : ' ↓'
+            )}
+          </Col>
+
           <Col span={4}>Media Type</Col>
           <Col span={4}>Action</Col>
-        </Row> */}
+        </Row>
 
         {files.map(file => (
           <Row
