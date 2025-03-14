@@ -1,16 +1,15 @@
 // src/components/MediaManagement/ContextMenu.tsx
-
 import React from 'react';
 
 interface ContextMenuProps {
-  visible: boolean;                  // Hiển thị hay không
-  x: number;                         // Vị trí chuột X
-  y: number;                         // Vị trí chuột Y
-  targetType: 'folder' | 'file' | null; // Đối tượng bị click (folder hay file)
-  targetName: string;               // Tên folder/file
+  visible: boolean;
+  x: number;
+  y: number;
+  targetType: 'folder' | 'file' | null;
+  targetName: string;
   onRename: (type: 'folder' | 'file', name: string) => void;
   onDelete: (type: 'folder' | 'file', name: string) => void;
-  onClose: () => void;              // Đóng context menu
+  onClose: () => void;
 }
 
 const ContextMenu: React.FC<ContextMenuProps> = ({
@@ -23,22 +22,15 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   onDelete,
   onClose,
 }) => {
-  // Nếu không visible thì return null
-  if (!visible) {
-    return null;
-  }
+  if (!visible) return null;
 
   const handleRename = () => {
-    if (targetType) {
-      onRename(targetType, targetName);
-    }
+    if (targetType) onRename(targetType, targetName);
     onClose();
   };
 
   const handleDelete = () => {
-    if (targetType) {
-      onDelete(targetType, targetName);
-    }
+    if (targetType) onDelete(targetType, targetName);
     onClose();
   };
 
@@ -46,15 +38,13 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     <div
       style={{
         position: 'absolute',
-        top: y,
-        left: x,
+        top: y - 55,    // hoặc y + 5 nếu muốn lệch xuống chút
+        left: x -15,   // hoặc x + 5 nếu muốn lệch sang phải chút
         background: '#fff',
         border: '1px solid #ccc',
         boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
         zIndex: 9999,
       }}
-      // Để tránh context menu không đóng nếu click ra ngoài
-      // ta có thể dùng onClickCapture, onBlur, v.v. Tuỳ ý
     >
       <ul style={{ margin: 0, padding: '8px 0', listStyle: 'none', minWidth: 120 }}>
         <li

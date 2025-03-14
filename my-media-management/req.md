@@ -43,6 +43,13 @@
   - Có navigator để quay lại các thư mục trước đó
 - **Folder**:
   - Cho phép tạo nhiều folder ở nhiều cấp
+- **List View**
+  - Có 3 cột, Tên file/folder,  Updated At và Action và Media Type. Trong đó
+  - Updated At là thời gian thay đổi của Folder hay File
+  - Media Type là Folder hoặc PNG, JPG, MP4
+  - Action là Đổi tên và Xoá
+- **View Mode**
+  - Có 2 chế độ là Grid Mode và List Mode
 
 ### Các tính năng khác:
 - **UI/UX**:

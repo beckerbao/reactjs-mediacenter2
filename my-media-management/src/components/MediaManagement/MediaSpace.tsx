@@ -145,8 +145,8 @@ const MediaSpace: React.FC = () => {
   const handleContextMenuFolder = (e: React.MouseEvent, folder: FolderItem) => {
     e.preventDefault();
     setContextMenuVisible(true);
-    setContextMenuX(e.clientX);
-    setContextMenuY(e.clientY);
+    setContextMenuX(e.pageX);
+    setContextMenuY(e.pageY);
     setContextMenuTargetType('folder');
     setContextMenuTargetName(folder.name);
   };
@@ -155,8 +155,8 @@ const MediaSpace: React.FC = () => {
   const handleContextMenuFile = (e: React.MouseEvent, file: FileItem) => {
     e.preventDefault();
     setContextMenuVisible(true);
-    setContextMenuX(e.clientX);
-    setContextMenuY(e.clientY);
+    setContextMenuX(e.pageX);
+    setContextMenuY(e.pageY);
     setContextMenuTargetType('file');
     setContextMenuTargetName(file.name);
   };
@@ -276,6 +276,14 @@ const MediaSpace: React.FC = () => {
               viewMode={viewMode}
               onDoubleClickFolder={handleFolderDoubleClick}
               onRightClickFolder={handleContextMenuFolder}
+              onRenameFolder={(folder) => {
+                alert(`Đổi tên folder ${folder.name}`);
+                // ...logic rename
+              }}
+              onDeleteFolder={(folder) => {
+                alert(`Xoá folder ${folder.name}`);
+                // ...logic delete
+              }}
             />
           </Col>
           <Col span={24}>
@@ -284,6 +292,14 @@ const MediaSpace: React.FC = () => {
               files={filteredFiles}
               viewMode={viewMode}
               onRightClickFile={handleContextMenuFile}
+              onRenameFile={(file) => {
+                alert(`Đổi tên file ${file.name}`);
+                // ...logic rename
+              }}
+              onDeleteFile={(file) => {
+                alert(`Xoá file ${file.name}`);
+                // ...logic delete
+              }}
             />
           </Col>
         </Row>
