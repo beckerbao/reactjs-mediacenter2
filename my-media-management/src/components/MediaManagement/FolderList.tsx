@@ -1,21 +1,39 @@
+// src/components/MediaManagement/FolderList.tsx
+
 import React from 'react';
 import { Row, Col, Card } from 'antd';
 import { FolderFilled } from '@ant-design/icons';
 
-interface Folder {
+// -- Định nghĩa kiểu dữ liệu --
+export interface FileItem {
   id: number;
   name: string;
+  type: 'file';
 }
 
+export interface FolderItem {
+  id: number;
+  name: string;
+  type: 'folder';
+  children: Array<FolderItem | FileItem>;
+}
+
+// -- Props cho FolderList --
 interface FolderListProps {
-  folders: Folder[];
-  // 'grid' hoặc 'list'
+  folders: FolderItem[];
   viewMode: 'grid' | 'list';
+  onDoubleClickFolder: (folder: FolderItem) => void;
+  onRightClickFolder: (e: React.MouseEvent, folder: FolderItem) => void; 
 }
 
-const FolderList: React.FC<FolderListProps> = ({ folders, viewMode }) => {
+const FolderList: React.FC<FolderListProps> = ({
+  folders,
+  viewMode,
+  onDoubleClickFolder,
+  onRightClickFolder,
+}) => {
+  // Dạng List
   if (viewMode === 'list') {
-    // Hiển thị dạng list
     return (
       <div>
         {folders.map(folder => (
@@ -28,6 +46,9 @@ const FolderList: React.FC<FolderListProps> = ({ folders, viewMode }) => {
               padding: '8px 0',
               cursor: 'pointer',
             }}
+            onDoubleClick={() => onDoubleClickFolder(folder)}
+            onContextMenu={(e) => onRightClickFolder(e, folder)}
+            title="Double Click to open folder / Right Click for context menu"
           >
             <FolderFilled style={{ fontSize: 24, color: '#faad14', marginRight: 8 }} />
             <span>{folder.name}</span>
@@ -37,22 +58,18 @@ const FolderList: React.FC<FolderListProps> = ({ folders, viewMode }) => {
     );
   }
 
-  // Mặc định dạng grid
+  // Dạng Grid
   return (
     <Row gutter={[16, 16]}>
       {folders.map(folder => (
-        <Col
-          key={folder.id}
-          xs={12}
-          sm={8}
-          md={6}
-          lg={4}
-          // có thể thêm xl={3} xxl={2} tuỳ nhu cầu
-        >
+        <Col key={folder.id} xs={12} sm={8} md={6} lg={4}>
           <Card
             hoverable
             style={{ textAlign: 'center' }}
             bodyStyle={{ padding: 16 }}
+            onDoubleClick={() => onDoubleClickFolder(folder)}
+            onContextMenu={(e) => onRightClickFolder(e, folder)}
+            title="Double Click to open folder / Right Click for context menu"
           >
             <FolderFilled style={{ fontSize: 48, color: '#faad14' }} />
             <div style={{ marginTop: 8 }}>{folder.name}</div>

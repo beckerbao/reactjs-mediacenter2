@@ -1,31 +1,20 @@
+// src/components/MediaManagement/FileList.tsx
+
 import React from 'react';
 import { Row, Col, Card } from 'antd';
 import { FileOutlined } from '@ant-design/icons';
+import type { FileItem } from './FolderList';
 
-interface FileItem {
-  id: number;
-  name: string;
-}
-
+// -- Props cho FileList --
 interface FileListProps {
   files: FileItem[];
   viewMode: 'grid' | 'list';
-  onFileClick?: (file: FileItem) => void;
+  onRightClickFile: (e: React.MouseEvent, file: FileItem) => void;
 }
 
-const FileList: React.FC<FileListProps> = ({
-  files,
-  viewMode,
-  onFileClick,
-}) => {
-  const handleFileClick = (file: FileItem) => {
-    if (onFileClick) {
-      onFileClick(file);
-    }
-  };
-
+const FileList: React.FC<FileListProps> = ({ files, viewMode, onRightClickFile }) => {
+  // Dạng List
   if (viewMode === 'list') {
-    // Hiển thị dạng List
     return (
       <div>
         {files.map(file => (
@@ -36,9 +25,10 @@ const FileList: React.FC<FileListProps> = ({
               alignItems: 'center',
               borderBottom: '1px solid #eee',
               padding: '8px 0',
-              cursor: 'pointer',
+              cursor: 'default',
             }}
-            onClick={() => handleFileClick(file)}
+            onContextMenu={(e) => onRightClickFile(e, file)}
+            title="Right Click for context menu"
           >
             <FileOutlined style={{ fontSize: 24, marginRight: 8 }} />
             <span>{file.name}</span>
@@ -48,7 +38,7 @@ const FileList: React.FC<FileListProps> = ({
     );
   }
 
-  // Mặc định là hiển thị dạng Grid
+  // Dạng Grid
   return (
     <Row gutter={[16, 16]}>
       {files.map(file => (
@@ -57,7 +47,8 @@ const FileList: React.FC<FileListProps> = ({
             hoverable
             style={{ textAlign: 'center' }}
             bodyStyle={{ padding: 16 }}
-            onClick={() => handleFileClick(file)}
+            onContextMenu={(e) => onRightClickFile(e, file)}
+            title="Right Click for context menu"
           >
             <FileOutlined style={{ fontSize: 48 }} />
             <div style={{ marginTop: 8 }}>{file.name}</div>
